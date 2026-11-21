@@ -45,21 +45,33 @@
   </div>
 </main>
 
-<!-- BOTTOM CHROME -->
+<!-- TITLE: left-middle edge, only in full-screen phase (reference) -->
+<div class="bl" id="titleWrap">
+  <h2 class="ptitle" id="ptitle">Café Breizh</h2>
+</div>
+
+<!-- COUNTER: bottom-left, full-screen phase only -->
+<div class="counter" id="counterEl"><span id="cNow">01</span> / <span id="cTot">05</span></div>
+
+<!-- BOTTOM BAR: case pill + cookie row on one line (reference) -->
 <div class="chrome bottom">
-  <div class="bl">
-    <h2 class="ptitle" id="ptitle">Café Breizh</h2>
-    <div class="counter"><span id="cNow">01</span> / <span id="cTot">05</span></div>
-  </div>
   <a class="pill" id="casePill" href="https://cafe-breizh.pages.dev" target="_blank" rel="noopener">
     <span class="pill_tile" id="pillTile">CB</span>
     <span class="pill_txt">View Case Study</span>
     <span class="pill_ic"><span></span><span></span></span>
   </a>
-  <div class="scrollhint">
-    <svg class="mouse" viewBox="0 0 24 36" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="33" rx="10.5" fill="none" stroke="currentColor" stroke-width="2"/><circle class="wheel" cx="12" cy="10" r="2.6" fill="currentColor"/></svg>
-    <span>Scroll to navigate</span>
+  <div class="cookie" id="cookie">
+    <p>We use cookies to track and enhance your experience.<br><a href="#" onclick="return false">Cookie policy</a> · <button class="linklike" id="ckReject">Reject</button></p>
+    <div class="cookie_btns">
+      <button id="ckSettings">Settings</button>
+      <button id="ckAccept" class="dark">Accept</button>
+    </div>
   </div>
+</div>
+
+<!-- MOUSE BUTTON: bottom-right dark square, full-screen phase -->
+<div class="mousebox" id="mouseEl">
+  <svg class="mouse" viewBox="0 0 24 36" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="33" rx="10.5" fill="none" stroke="#eee" stroke-width="2"/><circle class="wheel" cx="12" cy="10" r="2.6" fill="#eee"/></svg>
 </div>
 
 <!-- MENU PANEL -->
@@ -99,16 +111,6 @@
   </div>
 </div>
 <div class="scrim" id="scrim"></div>
-
-<!-- COOKIE CARD -->
-<div class="cookie" id="cookie">
-  <p>We use cookies to track and enhance your experience. <a href="#" onclick="return false">Cookie policy</a></p>
-  <div class="cookie_btns">
-    <button id="ckReject">Reject</button>
-    <button id="ckSettings">Settings</button>
-    <button id="ckAccept" class="dark">Accept</button>
-  </div>
-</div>
 
 <script src="app.js"></script>
 </body>

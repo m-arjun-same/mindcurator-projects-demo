@@ -51,23 +51,43 @@ function syncVideos() {
   return act;
 }
 
-let lastActive = -1;
+let lastActive = -1, expand = 0;
+const topEl = document.querySelector(".chrome.top");
+const titleWrap = document.getElementById("titleWrap");
+const counterEl = document.getElementById("counterEl");
+const mouseEl = document.getElementById("mouseEl");
 function frame() {
   current += (target - current) * 0.062;
   if (Math.abs(target - current) < 0.0004) current = target;
   const moving = Math.abs(target - current) > 0.015;
   body.classList.toggle("is-moving", moving);
+  // reference two-phase motion: ring while moving, active card expands to full screen when settled
+  expand += ((moving ? 0 : 1) - expand) * 0.048;
+  if (expand < 0.001) expand = moving ? expand : 0;
+  const dock = innerWidth < 640 ? 0.68 : 0.44;   // ring-phase centre card size
 
   cards.forEach((c, i) => {
-    const d = off(i), a = Math.abs(d);
-    const x = d * 92;                       // % of card width sideways — neighbours peek at rest
-    const ry = d * -32;                     // deg, turned toward viewer
-    const s = Math.max(0.62, 1 - a * 0.17);
-    c.style.transform = `translateX(${x}%) rotateY(${ry}deg) scale(${s})`;
-    c.style.zIndex = String(100 - Math.round(a * 10));
-    c.style.opacity = a > 2.4 ? "0" : "1";
-    c.style.visibility = a > 2.6 ? "hidden" : "visible";
+    const d = off(i), a = Math.abs(d), sgn = Math.sign(d) || 1;
+    const act = Math.max(0, 1 - a);              // 1 = centred card
+    const e = expand * act;                      // this card's full-screen blend
+    let x, s, ry;
+    if (a <= 1) { x = d * 54; s = dock * (1 - a * 0.22); ry = d * -30; }
+    else { x = sgn * (54 + (a - 1) * 19); s = dock * Math.max(0.16, 0.78 - (a - 1) * 0.30); ry = sgn * -52; }
+    s = s + (1 - s) * e;
+    x *= (1 - e); ry *= (1 - e);
+    c.style.transform = `translate(-50%,-50%) translateX(${x}%) rotateY(${ry}deg) scale(${s})`;
+    c.style.borderRadius = (20 * (1 - e)) + "px";
+    c.style.zIndex = String(100 - Math.round(a * 10) + (act > 0.9 ? 40 : 0));
+    const op = (a > 2.9 ? 0 : 1) * (1 - expand * (1 - act) * 0.94);
+    c.style.opacity = op.toFixed(3);
+    c.style.visibility = op <= 0.01 ? "hidden" : "visible";
   });
+
+  // chrome phases: header / title / counter / mouse button exist only in full-screen phase
+  topEl.style.opacity = expand; titleWrap.style.opacity = expand;
+  counterEl.style.opacity = expand; mouseEl.style.opacity = expand;
+  const pe = expand > 0.5 ? "auto" : "none";
+  topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe;
 
   const act = syncVideos();
   if (act !== lastActive) {
