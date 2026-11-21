@@ -130,16 +130,26 @@ addEventListener("keydown", e => {
   if (e.key === "ArrowUp" || e.key === "ArrowLeft") { stopTour(); target = Math.round(target) - 1; }
   if (e.key === "Escape") closePanels();
 });
-let touchY = null, touchBase = 0;
-addEventListener("touchstart", e => { touchY = e.touches[0].clientY; touchBase = Math.round(target); }, { passive: true });
+let touchY = null, touchBase = 0, touchStart = 0;
+addEventListener("touchstart", e => { touchY = touchStart = e.touches[0].clientY; touchBase = Math.round(target); }, { passive: true });
 addEventListener("touchmove", e => {
   if (touchY === null || body.classList.contains("panel-open")) return;
   stopTour();
-  target += (touchY - e.touches[0].clientY) * 0.004;
+  const y = e.touches[0].clientY;
+  target += (touchY - y) * 0.005;
   target = Math.max(touchBase - 1, Math.min(touchBase + 1, target)); // one swipe = max one project
-  touchY = e.touches[0].clientY;
+  touchY = y;
 }, { passive: true });
-addEventListener("touchend", () => { touchY = null; target = Math.round(target); });
+function touchDone(e) {
+  if (touchY === null) return;
+  const dy = touchStart - (e.changedTouches[0].clientY);
+  target = Math.abs(dy) > 34 ? touchBase + Math.sign(dy) : Math.round(target); // a real flick always lands one project over
+  touchY = null;
+}
+addEventListener("touchend", touchDone);
+addEventListener("touchcancel", () => { touchY = null; target = Math.round(target); });
+const rh = document.getElementById("rotateHint");
+if (rh) rh.addEventListener("click", () => rh.classList.add("hide"));
 
 
 /* ---------- PANELS ---------- */
