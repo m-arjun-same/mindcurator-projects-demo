@@ -51,7 +51,7 @@ function syncVideos() {
   return act;
 }
 
-let lastActive = -1, expand = 0;
+let lastActive = -1, expand = 0, shrinkF = 1;
 const topEl = document.querySelector(".chrome.top");
 const titleWrap = document.getElementById("titleWrap");
 const counterEl = document.getElementById("counterEl");
@@ -64,6 +64,7 @@ function frame() {
   // reference two-phase motion: ring while moving, active card expands to full screen when settled
   expand += ((moving ? 0 : 1) - expand) * 0.048;
   if (expand < 0.001) expand = moving ? expand : 0;
+  shrinkF += ((moving ? 0.72 : 1) - shrinkF) * 0.09; // every video shrinks while the user scrolls
   const dock = innerWidth < 640 ? 0.68 : 0.44;   // ring-phase centre card size
 
   cards.forEach((c, i) => {
@@ -73,6 +74,7 @@ function frame() {
     let x, s, ry;
     if (a <= 1) { x = d * 54; s = dock * (1 - a * 0.22); ry = d * -30; }
     else { x = sgn * (54 + (a - 1) * 19); s = dock * Math.max(0.16, 0.78 - (a - 1) * 0.30); ry = sgn * -52; }
+    s *= shrinkF;
     s = s + (1 - s) * e;
     x *= (1 - e); ry *= (1 - e);
     c.style.transform = `translate(-50%,-50%) translateX(${x}%) rotateY(${ry}deg) scale(${s})`;
