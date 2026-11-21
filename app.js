@@ -46,7 +46,7 @@ function syncVideos() {
   const act = wrap(Math.round(current));
   videos.forEach((v, i) => {
     const d = Math.abs(off(i));
-    if (d < 1.6) { v.play().catch(() => {}); } else { v.pause(); }
+    if (d < 0.55) { v.play().catch(() => {}); } else { v.pause(); } // only the centred video decodes — neighbours ride on posters (mobile perf)
   });
   return act;
 }

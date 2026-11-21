@@ -94,6 +94,10 @@ body.panel-open .scrim{opacity:1;visibility:visible}
 
 /* ---------- MOBILE ---------- */
 @media (max-width:640px){
+  /* mobile perf: lighter blur, no giant card shadow — these repaint every frame over video */
+  .wordmark,.tagline,.ptitle,.counter,.pill,.cookie,.panel,.rotatehint,.burger,.mousebox{-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+  .pill,.cookie{background:rgba(18,18,18,.68)}
+  .card{box-shadow:none}
   .chrome.top{padding:14px}
   .chrome.bottom{padding:12px;gap:8px;justify-content:center}
   .bl{left:14px}
