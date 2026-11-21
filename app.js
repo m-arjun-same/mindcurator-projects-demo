@@ -84,8 +84,10 @@ function frame() {
   });
 
   // chrome phases: header / title / counter / mouse button exist only in full-screen phase
-  topEl.style.opacity = expand; titleWrap.style.opacity = expand;
-  counterEl.style.opacity = expand; mouseEl.style.opacity = expand;
+  const co = Math.pow(expand, 1.4).toFixed(3);
+  topEl.style.opacity = co; titleWrap.style.opacity = co;
+  counterEl.style.opacity = co; mouseEl.style.opacity = co;
+  body.classList.toggle("full", expand > 0.5);
   const pe = expand > 0.5 ? "auto" : "none";
   topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe;
 
@@ -112,7 +114,8 @@ addEventListener("wheel", e => {
   if (body.classList.contains("panel-open")) return;
   stopTour();
   const now = performance.now();
-  if (now - lastStep > 320 && Math.abs(e.deltaY) > 6) {
+  // one gesture = one project: locked until the ring settles (reference behaviour)
+  if (now - lastStep > 850 && Math.abs(target - current) < 0.08 && Math.abs(e.deltaY) > 6) {
     target = Math.round(target) + Math.sign(e.deltaY);
     lastStep = now;
   }
@@ -122,12 +125,13 @@ addEventListener("keydown", e => {
   if (e.key === "ArrowUp" || e.key === "ArrowLeft") { stopTour(); target = Math.round(target) - 1; }
   if (e.key === "Escape") closePanels();
 });
-let touchY = null;
-addEventListener("touchstart", e => { touchY = e.touches[0].clientY; }, { passive: true });
+let touchY = null, touchBase = 0;
+addEventListener("touchstart", e => { touchY = e.touches[0].clientY; touchBase = Math.round(target); }, { passive: true });
 addEventListener("touchmove", e => {
   if (touchY === null || body.classList.contains("panel-open")) return;
   stopTour();
   target += (touchY - e.touches[0].clientY) * 0.004;
+  target = Math.max(touchBase - 1, Math.min(touchBase + 1, target)); // one swipe = max one project
   touchY = e.touches[0].clientY;
 }, { passive: true });
 addEventListener("touchend", () => { touchY = null; target = Math.round(target); });
