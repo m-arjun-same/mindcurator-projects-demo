@@ -10,6 +10,8 @@ const N = SLIDES.length;
 const cards = [...document.querySelectorAll(".card")];
 const videos = cards.map(c => c.querySelector("video"));
 const body = document.body;
+// phones get the light copies (1280px — still 3x a phone screen, a quarter of the decode work)
+if (matchMedia("(max-width: 820px)").matches) videos.forEach(v => { v.src = v.getAttribute("src").replace("-hq", "-m"); });
 
 /* ---------- LOADER ---------- */
 let loaded = 0, shown = 0;
@@ -42,11 +44,12 @@ const wrap = i => ((i % N) + N) % N;
 const off = i => { let d = i - current; d -= Math.round(d / N) * N; return d; };
 
 function startVideos() { syncVideos(); }
+let userPaused = false;
 function syncVideos() {
   const act = wrap(Math.round(current));
   videos.forEach((v, i) => {
     const d = Math.abs(off(i));
-    if (d < 0.55) { v.play().catch(() => {}); } else { v.pause(); } // only the centred video decodes — neighbours ride on posters (mobile perf)
+    if (d < 0.55 && !userPaused) { v.play().catch(() => {}); } else { v.pause(); } // only the centred video decodes — neighbours ride on posters (mobile perf)
   });
   return act;
 }
@@ -56,6 +59,7 @@ const topEl = document.querySelector(".chrome.top");
 const titleWrap = document.getElementById("titleWrap");
 const counterEl = document.getElementById("counterEl");
 const mouseEl = document.getElementById("mouseEl");
+const playBtn = document.getElementById("playBtn");
 function frame() {
   current += (target - current) * 0.062;
   if (Math.abs(target - current) < 0.0004) current = target;
@@ -88,14 +92,15 @@ function frame() {
   // chrome phases: header / title / counter / mouse button exist only in full-screen phase
   const co = Math.pow(expand, 1.4).toFixed(3);
   topEl.style.opacity = co; titleWrap.style.opacity = co;
-  counterEl.style.opacity = co; mouseEl.style.opacity = co;
+  counterEl.style.opacity = co; mouseEl.style.opacity = co; playBtn.style.opacity = co;
   body.classList.toggle("full", expand > 0.5);
   const pe = expand > 0.5 ? "auto" : "none";
-  topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe;
+  topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe; playBtn.style.pointerEvents = pe;
 
   const act = syncVideos();
   if (act !== lastActive) {
     lastActive = act;
+    userPaused = false; body.classList.remove("vid-paused");
     const av = videos[act];               // every video starts from the beginning when scrolled to
     try { av.currentTime = 0; } catch (e) {}
     av.play().catch(() => {});
@@ -169,6 +174,12 @@ menuPanel.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { stopTou
 document.getElementById("reelBtn").onclick = () => {
   closePanels(); stopTour();
   tourTimer = setInterval(() => { target = Math.round(target) + 1; }, 4200);
+};
+playBtn.onclick = () => {
+  const v = videos[wrap(Math.round(current))];
+  if (v.paused) { userPaused = false; v.play().catch(() => {}); }
+  else { userPaused = true; v.pause(); }
+  body.classList.toggle("vid-paused", userPaused);
 };
 document.getElementById("copyMail").onclick = e => {
   navigator.clipboard && navigator.clipboard.writeText("themindcuratorstudio@gmail.com");
