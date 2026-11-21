@@ -96,6 +96,9 @@ function frame() {
   const act = syncVideos();
   if (act !== lastActive) {
     lastActive = act;
+    const av = videos[act];               // every video starts from the beginning when scrolled to
+    try { av.currentTime = 0; } catch (e) {}
+    av.play().catch(() => {});
     const s = SLIDES[act];
     const t = document.getElementById("ptitle");
     t.style.opacity = "0";
