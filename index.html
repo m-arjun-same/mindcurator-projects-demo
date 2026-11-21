@@ -6,9 +6,9 @@
 <title>MindCurator Studio | Branding, motion and websites</title>
 <meta name="description" content="MindCurator Studio — we curate your business into a website people remember. Selected projects showcase.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d1d1d'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='26' fill='%23fff' text-anchor='middle'%3EMC%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
-<body data-theme="dark">
+<body>
 
 <!-- LOADER -->
 <div class="loader" id="loader">
@@ -23,36 +23,46 @@
   <button class="burger" id="menuBtn" aria-label="Open main menu"><span></span><span></span></button>
 </header>
 
-<!-- STAGE : 3D RING CAROUSEL -->
+<!-- STAGE : FOCUS PULL CAROUSEL -->
 <main class="stage" id="stage">
-  <div class="ring" id="ring">
+  <div class="track" id="track" aria-label="Projects carousel">
     <section class="card" data-i="0">
       <video src="assets/video/cafe-hq.mp4" poster="assets/img/cafe-poster.jpg" muted loop playsinline preload="auto"></video>
+      <button class="cardplay" aria-label="Play video"><svg class="i-play" width="22" height="25" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg><svg class="i-pause" width="20" height="22" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg></button>
     </section>
     <section class="card" data-i="1">
       <video src="assets/video/citypaws-hq.mp4" poster="assets/img/citypaws-poster.jpg" muted loop playsinline preload="metadata"></video>
+      <button class="cardplay" aria-label="Play video"><svg class="i-play" width="22" height="25" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg><svg class="i-pause" width="20" height="22" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg></button>
     </section>
     <section class="card" data-i="2">
       <video src="assets/video/videotheque-hq.mp4" poster="assets/img/videotheque-poster.jpg" muted loop playsinline preload="metadata"></video>
+      <button class="cardplay" aria-label="Play video"><svg class="i-play" width="22" height="25" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg><svg class="i-pause" width="20" height="22" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg></button>
     </section>
     <section class="card" data-i="3">
       <video src="assets/video/mayuri-hq.mp4" poster="assets/img/mayuri-poster.jpg" muted loop playsinline preload="metadata"></video>
+      <button class="cardplay" aria-label="Play video"><svg class="i-play" width="22" height="25" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg><svg class="i-pause" width="20" height="22" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg></button>
     </section>
     <section class="card" data-i="4">
       <video src="assets/video/nursery-hq.mp4" poster="assets/img/nursery-poster.jpg" muted loop playsinline preload="metadata"></video>
+      <button class="cardplay" aria-label="Play video"><svg class="i-play" width="22" height="25" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg><svg class="i-pause" width="20" height="22" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg></button>
     </section>
   </div>
+
+  <div class="meta">
+    <div class="cap" id="capBox">
+      <h2 class="ptitle" id="ptitle">Café Breizh</h2>
+      <p class="capsub" id="capsub">French bakery · Las Vegas</p>
+    </div>
+    <div class="count"><b id="cNow">01</b> / <span id="cTot">05</span></div>
+    <div class="navbtns">
+      <button class="navbtn" id="prevBtn" aria-label="Previous project"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.4"/></svg></button>
+      <button class="navbtn" id="nextBtn" aria-label="Next project"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="1.4"/></svg></button>
+    </div>
+  </div>
+  <div class="bar"><i id="barFill"></i></div>
 </main>
 
-<!-- TITLE: left-middle edge, only in full-screen phase (reference) -->
-<div class="bl" id="titleWrap">
-  <h2 class="ptitle" id="ptitle">Café Breizh</h2>
-</div>
-
-<!-- COUNTER: bottom-left, full-screen phase only -->
-<div class="counter" id="counterEl"><span id="cNow">01</span> / <span id="cTot">05</span></div>
-
-<!-- BOTTOM BAR: case pill + cookie row on one line (reference) -->
+<!-- BOTTOM BAR: case pill + cookie row on one line -->
 <div class="chrome bottom">
   <a class="pill" id="casePill" href="https://cafe-breizh.pages.dev" target="_blank" rel="noopener">
     <span class="pill_tile" id="pillTile">CB</span>
@@ -72,22 +82,6 @@
 <div class="rotatehint" id="rotateHint">
   <svg width="15" height="22" viewBox="0 0 15 22" fill="none"><rect x="1" y="1" width="13" height="20" rx="3" stroke="#f2f2f2" stroke-width="1.6"/><circle cx="7.5" cy="18" r="1.3" fill="#f2f2f2"/></svg>
   <span>Rotate your phone to watch clearly</span>
-</div>
-
-<!-- BIG CENTRE PLAY: video plays only when the user clicks -->
-<button class="bigplay" id="bigPlay" aria-label="Play the video">
-  <svg width="26" height="30" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg>
-</button>
-
-<!-- PLAY / PAUSE: user's own control for the video -->
-<button class="playbtn" id="playBtn" aria-label="Play or pause the video">
-  <svg class="ico-pause" width="15" height="16" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg>
-  <svg class="ico-play" width="15" height="16" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg>
-</button>
-
-<!-- MOUSE BUTTON: bottom-right dark square, full-screen phase -->
-<div class="mousebox" id="mouseEl">
-  <svg class="mouse" viewBox="0 0 24 36" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="33" rx="10.5" fill="none" stroke="#eee" stroke-width="2"/><circle class="wheel" cx="12" cy="10" r="2.6" fill="#eee"/></svg>
 </div>
 
 <!-- MENU PANEL -->
@@ -128,6 +122,6 @@
 </div>
 <div class="scrim" id="scrim"></div>
 
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

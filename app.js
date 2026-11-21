@@ -1,15 +1,20 @@
-// MindCurator × Mubien UI — own code. Scroll-driven 3D ring carousel.
+// MindCurator showcase — Focus Pull carousel (own-code port of the effect):
+// native scroll-snap track; the centre card is sharp and full size, neighbours
+// blur, shrink, desaturate and fade by their distance from the centre.
 const SLIDES = [
-  { title: "Café Breizh",        tile: "CB", theme: "dark",  href: "https://cafe-breizh.pages.dev" },
-  { title: "CityPaws Grooming",  tile: "CP", theme: "dark",  href: "https://citypaws-grooming.pages.dev" },
-  { title: "Videotheque",        tile: "V",  theme: "light", href: "https://videotheque-5da.pages.dev" },
-  { title: "Mayuri Footwear",    tile: "M",  theme: "dark",  href: "https://m-arjun-same.github.io/mayuri-footwears/" },
-  { title: "The Nursery Garden", tile: "NG", theme: "dark",  href: "https://m-arjun-same.github.io/nursery-garden/" },
+  { title: "Café Breizh",        caption: "French bakery · Las Vegas",   tile: "CB", href: "https://cafe-breizh.pages.dev" },
+  { title: "CityPaws Grooming",  caption: "Dog grooming · Houston",      tile: "CP", href: "https://citypaws-grooming.pages.dev" },
+  { title: "Videotheque",        caption: "Video rental store",          tile: "V",  href: "https://videotheque-5da.pages.dev" },
+  { title: "Mayuri Footwear",    caption: "Footwear store",              tile: "M",  href: "https://m-arjun-same.github.io/mayuri-footwears/" },
+  { title: "The Nursery Garden", caption: "Garden centre · Los Angeles", tile: "NG", href: "https://m-arjun-same.github.io/nursery-garden/" },
 ];
 const N = SLIDES.length;
-const cards = [...document.querySelectorAll(".card")];
+const track = document.getElementById("track");
+const cards = [...track.children];
 const videos = cards.map(c => c.querySelector("video"));
 const body = document.body;
+const BLUR = innerWidth < 820 ? 4 : 7;   // px of blur at one card away (lighter on phones)
+
 // phones get the light copies (1280px — still 3x a phone screen, a quarter of the decode work)
 if (matchMedia("(max-width: 820px)").matches) videos.forEach(v => { v.src = v.getAttribute("src").replace("-hq", "-m"); });
 
@@ -28,137 +33,108 @@ const loadTick = setInterval(() => {
     shown = 100; clearInterval(loadTick);
     bar.style.width = "100%"; pct.textContent = "100%";
     setTimeout(() => document.getElementById("loader").classList.add("done"), 250);
-    startVideos();
   }
   bar.style.width = shown + "%"; pct.textContent = shown + "%";
 }, 90);
 setTimeout(() => { // never trap the user behind the loader
   if (!document.getElementById("loader").classList.contains("done")) {
-    clearInterval(loadTick); document.getElementById("loader").classList.add("done"); startVideos();
+    clearInterval(loadTick); document.getElementById("loader").classList.add("done");
   }
 }, 4500);
 
-/* ---------- RING ENGINE ---------- */
-let target = 0, current = 0, tourTimer = null;
+/* ---------- FOCUS PULL ENGINE ---------- */
 const wrap = i => ((i % N) + N) % N;
-const off = i => { let d = i - current; d -= Math.round(d / N) * N; return d; };
+const pad2 = n => String(n).padStart(2, "0");
+let active = 0, userPlaying = false, tourTimer = null;
+const barFill = document.getElementById("barFill");
 
-function startVideos() { syncVideos(); }
-let userPlaying = false;   // videos NEVER autoplay — they play only on the user's click
-function syncVideos() {
-  const act = wrap(Math.round(current));
-  videos.forEach((v, i) => {
-    if (i === act && userPlaying && Math.abs(off(i)) < 0.55) { v.play().catch(() => {}); } else { v.pause(); }
-  });
-  return act;
+function focusOf(d) {           // how out of focus a card is, d in card widths from centre
+  const a = Math.min(Math.abs(d), 1);
+  return {
+    scale: 1 - 0.14 * a,
+    blur: Math.min(Math.abs(d), 2) * BLUR,
+    opacity: 1 - 0.5 * a,
+    saturate: 1 - 0.45 * a,
+  };
 }
 
-let lastActive = -1, expand = 0, shrinkF = 1;
-const topEl = document.querySelector(".chrome.top");
-const titleWrap = document.getElementById("titleWrap");
-const counterEl = document.getElementById("counterEl");
-const mouseEl = document.getElementById("mouseEl");
-const playBtn = document.getElementById("playBtn");
-const bigPlay = document.getElementById("bigPlay");
-function frame() {
-  current += (target - current) * 0.062;
-  if (Math.abs(target - current) < 0.0004) current = target;
-  const moving = Math.abs(target - current) > 0.015;
-  body.classList.toggle("is-moving", moving);
-  // reference two-phase motion: ring while moving, active card expands to full screen when settled
-  expand += ((moving ? 0 : 1) - expand) * 0.048;
-  if (expand < 0.001) expand = moving ? expand : 0;
-  shrinkF += ((moving ? 0.72 : 1) - shrinkF) * 0.09; // every video shrinks while the user scrolls
-  const dock = innerWidth < 640 ? 0.68 : 0.44;   // ring-phase centre card size
+function setActive(i) {
+  if (i === active && cards[i].classList.contains("is-active")) return;
+  active = i;
+  userPlaying = false;
+  body.classList.remove("vid-playing");
+  videos.forEach((v, j) => {       // every video waits at 0:00 until the user clicks play
+    v.pause();
+    if (j === i) { try { v.currentTime = 0; } catch (e) {} }
+  });
+  cards.forEach((c, j) => c.classList.toggle("is-active", j === i));
+  const s = SLIDES[i];
+  const cap = document.getElementById("capBox");
+  cap.classList.remove("swap"); void cap.offsetWidth; cap.classList.add("swap");
+  document.getElementById("ptitle").textContent = s.title;
+  document.getElementById("capsub").textContent = s.caption;
+  document.getElementById("cNow").textContent = pad2(i + 1);
+  document.getElementById("pillTile").textContent = s.tile;
+  document.getElementById("casePill").href = s.href;
+}
 
+function paint() {
+  if (!cards.length) return;
+  const mid = track.scrollLeft + track.clientWidth / 2;
+  const w = cards[0].offsetWidth || 1;
+  let best = 0, bestDist = Infinity;
   cards.forEach((c, i) => {
-    const d = off(i), a = Math.abs(d), sgn = Math.sign(d) || 1;
-    const act = Math.max(0, 1 - a);              // 1 = centred card
-    const e = expand * act;                      // this card's full-screen blend
-    let x, s, ry;
-    if (a <= 1) { x = d * 54; s = dock * (1 - a * 0.22); ry = d * -30; }
-    else { x = sgn * (54 + (a - 1) * 19); s = dock * Math.max(0.16, 0.78 - (a - 1) * 0.30); ry = sgn * -52; }
-    s *= shrinkF;
-    s = s + (1 - s) * e;
-    x *= (1 - e); ry *= (1 - e);
-    c.style.transform = `translate(-50%,-50%) translateX(${x}%) rotateY(${ry}deg) scale(${s})`;
-    c.style.borderRadius = (20 * (1 - e)) + "px";
-    c.style.zIndex = String(100 - Math.round(a * 10) + (act > 0.9 ? 40 : 0));
-    const op = (a > 2.9 ? 0 : 1) * (1 - expand * (1 - act) * 0.94);
-    c.style.opacity = op.toFixed(3);
-    c.style.visibility = op <= 0.01 ? "hidden" : "visible";
+    const center = c.offsetLeft + c.offsetWidth / 2;
+    const d = (center - mid) / w;
+    const f = focusOf(d);
+    c.style.transform = "scale(" + f.scale.toFixed(4) + ")";
+    c.style.filter = f.blur > 0.05 ? "blur(" + f.blur.toFixed(2) + "px) saturate(" + f.saturate.toFixed(3) + ")" : "none";
+    c.style.opacity = f.opacity.toFixed(3);
+    if (Math.abs(center - mid) < bestDist) { bestDist = Math.abs(center - mid); best = i; }
   });
-
-  // chrome phases: header / title / counter / mouse button exist only in full-screen phase
-  const co = Math.pow(expand, 1.4).toFixed(3);
-  topEl.style.opacity = co; titleWrap.style.opacity = co;
-  counterEl.style.opacity = co; mouseEl.style.opacity = co;
-  playBtn.style.opacity = userPlaying ? co : 0;               // small pause button only while playing
-  const bp = (!userPlaying && Math.abs(target - current) < 0.05) ? 1 : 0;  // centre play when settled + paused
-  bigPlay.style.opacity = bp; bigPlay.style.pointerEvents = bp ? "auto" : "none";
-  body.classList.toggle("full", expand > 0.5);
-  const pe = expand > 0.5 ? "auto" : "none";
-  topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe;
-  playBtn.style.pointerEvents = userPlaying ? pe : "none";
-
-  const act = syncVideos();
-  if (act !== lastActive) {
-    lastActive = act;
-    userPlaying = false; body.classList.remove("vid-playing");
-    const av = videos[act];               // every video waits at 0:00 until the user clicks play
-    try { av.currentTime = 0; } catch (e) {}
-    const s = SLIDES[act];
-    const t = document.getElementById("ptitle");
-    t.style.opacity = "0";
-    setTimeout(() => { t.textContent = s.title; t.style.opacity = "1"; }, 160);
-    document.getElementById("cNow").textContent = String(act + 1).padStart(2, "0");
-    document.getElementById("pillTile").textContent = s.tile;
-    document.getElementById("casePill").href = s.href;
-    body.dataset.theme = s.theme;
-  }
-  requestAnimationFrame(frame);
+  const max = track.scrollWidth - track.clientWidth;
+  barFill.style.transform = "scaleX(" + (max > 0 ? (track.scrollLeft / max).toFixed(4) : "0") + ")";
+  if (best !== active) setActive(best);
 }
-requestAnimationFrame(frame);
 
-/* ---------- INPUT ---------- */
-function stopTour() { if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } }
-let lastStep = 0;
-addEventListener("wheel", e => {
-  if (body.classList.contains("panel-open")) return;
-  stopTour();
-  const now = performance.now();
-  // one gesture = one project: locked until the ring settles (reference behaviour)
-  if (now - lastStep > 850 && Math.abs(target - current) < 0.08 && Math.abs(e.deltaY) > 6) {
-    target = Math.round(target) + Math.sign(e.deltaY);
-    lastStep = now;
-  }
+let raf = 0;
+track.addEventListener("scroll", () => {
+  if (!raf) raf = requestAnimationFrame(() => { raf = 0; paint(); });
 }, { passive: true });
+new ResizeObserver(() => paint()).observe(track);
+
+function scrollToIndex(i, smooth = true) {
+  const card = cards[wrap(i)];
+  if (!card) return;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  track.scrollTo({ left: card.offsetLeft + card.offsetWidth / 2 - track.clientWidth / 2, behavior: smooth && !reduce ? "smooth" : "auto" });
+}
+function stopTour() { if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } }
+track.addEventListener("pointerdown", stopTour);
+track.addEventListener("wheel", stopTour, { passive: true });
+track.addEventListener("touchstart", stopTour, { passive: true });
+
+document.getElementById("prevBtn").onclick = () => { stopTour(); scrollToIndex(active - 1); };
+document.getElementById("nextBtn").onclick = () => { stopTour(); scrollToIndex(active + 1); };
 addEventListener("keydown", e => {
-  if (e.key === "ArrowDown" || e.key === "ArrowRight") { stopTour(); target = Math.round(target) + 1; }
-  if (e.key === "ArrowUp" || e.key === "ArrowLeft") { stopTour(); target = Math.round(target) - 1; }
+  if (body.classList.contains("panel-open")) { if (e.key === "Escape") closePanels(); return; }
+  if (e.key === "ArrowRight" || e.key === "ArrowDown") { stopTour(); scrollToIndex(active + 1); }
+  if (e.key === "ArrowLeft" || e.key === "ArrowUp") { stopTour(); scrollToIndex(active - 1); }
   if (e.key === "Escape") closePanels();
 });
-let touchY = null, touchBase = 0, touchStart = 0;
-addEventListener("touchstart", e => { touchY = touchStart = e.touches[0].clientY; touchBase = Math.round(target); }, { passive: true });
-addEventListener("touchmove", e => {
-  if (touchY === null || body.classList.contains("panel-open")) return;
-  stopTour();
-  const y = e.touches[0].clientY;
-  target += (touchY - y) * 0.005;
-  target = Math.max(touchBase - 1, Math.min(touchBase + 1, target)); // one swipe = max one project
-  touchY = y;
-}, { passive: true });
-function touchDone(e) {
-  if (touchY === null) return;
-  const dy = touchStart - (e.changedTouches[0].clientY);
-  target = Math.abs(dy) > 34 ? touchBase + Math.sign(dy) : Math.round(target); // a real flick always lands one project over
-  touchY = null;
-}
-addEventListener("touchend", touchDone);
-addEventListener("touchcancel", () => { touchY = null; target = Math.round(target); });
-const rh = document.getElementById("rotateHint");
-if (rh) rh.addEventListener("click", () => rh.classList.add("hide"));
 
+/* ---------- CLICK-TO-PLAY (videos never autoplay) ---------- */
+function togglePlay(i) {
+  const v = videos[i];
+  if (v.paused) { userPlaying = true; v.play().catch(() => {}); }
+  else { userPlaying = false; v.pause(); }
+  cards[i].classList.toggle("playing", userPlaying);
+  body.classList.toggle("vid-playing", userPlaying);
+}
+cards.forEach((c, i) => {
+  c.querySelector(".cardplay").addEventListener("click", e => { e.stopPropagation(); togglePlay(i); });
+  c.addEventListener("click", () => { if (i !== active) { stopTour(); scrollToIndex(i); } });
+});
 
 /* ---------- PANELS ---------- */
 const menuPanel = document.getElementById("menuPanel"), contactPanel = document.getElementById("contactPanel");
@@ -172,20 +148,12 @@ document.getElementById("menuClose").onclick = () => closePanels();
 document.getElementById("contactClose").onclick = () => closePanels();
 document.getElementById("scrim").onclick = () => closePanels();
 document.getElementById("contactBtn").onclick = () => openPanel(contactPanel);
-document.getElementById("homeBtn").onclick = e => { e.preventDefault(); stopTour(); target = Math.round(target / N) * N; };
-menuPanel.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { stopTour(); target = Math.round(target / N) * N + (+b.dataset.go); closePanels(); });
+document.getElementById("homeBtn").onclick = e => { e.preventDefault(); stopTour(); scrollToIndex(0); };
+menuPanel.querySelectorAll("[data-go]").forEach(b => b.onclick = () => { stopTour(); scrollToIndex(+b.dataset.go); closePanels(); });
 document.getElementById("reelBtn").onclick = () => {
   closePanels(); stopTour();
-  tourTimer = setInterval(() => { target = Math.round(target) + 1; }, 4200);
+  tourTimer = setInterval(() => scrollToIndex(active + 1), 4200);
 };
-function togglePlay() {
-  const v = videos[wrap(Math.round(current))];
-  if (v.paused) { userPlaying = true; v.play().catch(() => {}); }
-  else { userPlaying = false; v.pause(); }
-  body.classList.toggle("vid-playing", userPlaying);
-}
-playBtn.onclick = togglePlay;
-document.getElementById("bigPlay").onclick = togglePlay;
 document.getElementById("copyMail").onclick = e => {
   navigator.clipboard && navigator.clipboard.writeText("themindcuratorstudio@gmail.com");
   e.target.textContent = "Copied!"; setTimeout(() => e.target.textContent = "Copy", 1600);
@@ -199,8 +167,12 @@ function tickClocks() {
 }
 tickClocks(); setInterval(tickClocks, 10000);
 
-/* ---------- COOKIE ---------- */
+/* ---------- COOKIE + MISC ---------- */
 const ck = document.getElementById("cookie");
 document.getElementById("ckAccept").onclick = document.getElementById("ckReject").onclick = () => ck.classList.add("hide");
 document.getElementById("ckSettings").onclick = () => openPanel(menuPanel);
-document.getElementById("cTot").textContent = String(N).padStart(2, "0");
+document.getElementById("cTot").textContent = pad2(N);
+const rh = document.getElementById("rotateHint");
+if (rh) rh.addEventListener("click", () => rh.classList.add("hide"));
+cards[0].classList.add("is-active");
+paint();
