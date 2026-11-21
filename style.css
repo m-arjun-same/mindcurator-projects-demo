@@ -98,19 +98,10 @@ body.panel-open .scrim{opacity:1;visibility:visible}
 .contact_row a{flex:1;text-align:center;border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:10px 4px;font-size:14px;transition:.3s var(--ease)}
 .contact_row a:hover{background:#f2f2f2;color:#1d1d1d}
 
-/* ---------- ROTATE HINT (portrait phones only) ---------- */
-.rotatehint{display:none}
-@media (max-width:820px) and (orientation:portrait){
-  .rotatehint{display:flex;align-items:center;gap:10px;position:fixed;left:50%;bottom:132px;transform:translateX(-50%);z-index:65;background:rgba(18,18,18,.55);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,.28);color:#f2f2f2;border-radius:99px;padding:9px 16px;font-size:13px;white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.3);cursor:pointer}
-  .rotatehint svg{animation:tilt 2.2s var(--ease) infinite}
-}
-.rotatehint.hide{display:none!important}
-@keyframes tilt{0%,55%{transform:rotate(0)}80%,100%{transform:rotate(90deg)}}
-
 /* ---------- MOBILE ---------- */
 @media (max-width:640px){
   :root{--w:84vw}
-  .wordmark,.pill,.cookie,.panel,.rotatehint,.burger{-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
+  .wordmark,.pill,.cookie,.panel,.burger{-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
   .pill,.cookie{background:rgba(18,18,18,.68)}
   .chrome.top{padding:14px}
   .chrome.bottom{padding:12px;gap:8px;justify-content:center}

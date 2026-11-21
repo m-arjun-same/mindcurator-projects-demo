@@ -162,7 +162,5 @@ const ck = document.getElementById("cookie");
 document.getElementById("ckAccept").onclick = document.getElementById("ckReject").onclick = () => ck.classList.add("hide");
 document.getElementById("ckSettings").onclick = () => openPanel(menuPanel);
 document.getElementById("cTot").textContent = pad2(N);
-const rh = document.getElementById("rotateHint");
-if (rh) rh.addEventListener("click", () => rh.classList.add("hide"));
 cards[0].classList.add("is-active");
 paint();
