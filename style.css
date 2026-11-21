@@ -55,7 +55,7 @@ body.panel-open .chrome,body.panel-open .bl,body.panel-open .counter,body.panel-
 .stage{position:fixed;inset:0;perspective:1400px;overflow:hidden;background:var(--bgstage)}
 .ring{position:absolute;inset:0;transform-style:preserve-3d}
 .card{position:absolute;left:50%;top:50%;width:100vw;height:100dvh;overflow:hidden;background:#111;will-change:transform,opacity;backface-visibility:hidden;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
-.card video{width:100%;height:100%;object-fit:cover;display:block}
+.card video{width:100%;height:100%;object-fit:contain;object-position:center;display:block;background:#000}
 
 /* ---------- PANELS ---------- */
 .scrim{position:fixed;inset:0;background:rgba(20,20,20,.35);opacity:0;visibility:hidden;transition:.4s var(--ease);z-index:80}
@@ -93,17 +93,21 @@ body.panel-open .scrim{opacity:1;visibility:visible}
 
 /* ---------- MOBILE ---------- */
 @media (max-width:640px){
-  .chrome.top{padding:16px}
-  .tagline{display:none}
-  .chrome.bottom{padding:14px;gap:10px}
-  .bl{left:16px}
-  .ptitle{font-size:24px;max-width:56vw}
-  .counter{left:16px;bottom:110px}
+  .chrome.top{padding:14px}
+  .chrome.bottom{padding:12px;gap:8px;justify-content:center}
+  .bl{left:14px}
+  .ptitle{font-size:22px;max-width:58vw;padding:9px 14px;border-radius:16px}
+  .counter{left:14px;bottom:118px}
   .pill{padding:6px 8px 6px 6px}
-  .pill_tile{width:34px;height:34px}
+  .pill_tile{width:34px;height:34px;border-radius:10px}
   .pill_txt{font-size:13.5px}
+  .cookie{padding:8px 10px;border-radius:14px}
   .cookie p{display:none}
+  .cookie_btns button{padding:8px 13px;font-size:12.5px}
   .mousebox{display:none}
+  .wordmark{font-size:15px;padding:8px 13px}
+  .burger{width:40px;height:40px}
+  .loader_mono{width:76px;height:76px;font-size:25px}
 }
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
