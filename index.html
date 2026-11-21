@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MindCurator Studio | Branding, motion and websites</title>
+<meta name="description" content="MindCurator Studio — we curate your business into a website people remember. Selected projects showcase.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d1d1d'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='26' fill='%23fff' text-anchor='middle'%3EMC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader_brand">MindCurator Studio</div>
+  <div class="loader_mono">MC</div>
+  <div class="loader_pill"><div class="loader_bar" id="loaderBar"></div><span class="loader_pct" id="loaderPct">0%</span></div>
+</div>
+
+<!-- HEADER -->
+<header class="chrome top">
+  <a class="wordmark" href="#" id="homeBtn">MindCurator</a>
+  <div class="tagline">Branding, Motion and Web<br>that people remember.</div>
+  <button class="burger" id="menuBtn" aria-label="Open main menu"><span></span><span></span></button>
+</header>
+
+<!-- STAGE : 3D RING CAROUSEL -->
+<main class="stage" id="stage">
+  <div class="ring" id="ring">
+    <section class="card" data-i="0">
+      <video src="assets/video/cafe.mp4" poster="assets/img/cafe-poster.jpg" muted loop playsinline preload="auto"></video>
+    </section>
+    <section class="card" data-i="1">
+      <video src="assets/video/citypaws.mp4" poster="assets/img/citypaws-poster.jpg" muted loop playsinline preload="metadata"></video>
+    </section>
+    <section class="card" data-i="2">
+      <video src="assets/video/videotheque.mp4" poster="assets/img/videotheque-poster.jpg" muted loop playsinline preload="metadata"></video>
+    </section>
+    <section class="card" data-i="3">
+      <video src="assets/video/mayuri.mp4" poster="assets/img/mayuri-poster.jpg" muted loop playsinline preload="metadata"></video>
+    </section>
+    <section class="card" data-i="4">
+      <video src="assets/video/nursery.mp4" poster="assets/img/nursery-poster.jpg" muted loop playsinline preload="metadata"></video>
+    </section>
+  </div>
+</main>
+
+<!-- BOTTOM CHROME -->
+<div class="chrome bottom">
+  <div class="bl">
+    <h2 class="ptitle" id="ptitle">Café Breizh</h2>
+    <div class="counter"><span id="cNow">01</span> / <span id="cTot">05</span></div>
+  </div>
+  <a class="pill" id="casePill" href="https://cafe-breizh.pages.dev" target="_blank" rel="noopener">
+    <span class="pill_tile" id="pillTile">CB</span>
+    <span class="pill_txt">View Case Study</span>
+    <span class="pill_ic"><span></span><span></span></span>
+  </a>
+  <div class="scrollhint">
+    <svg class="mouse" viewBox="0 0 24 36" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="33" rx="10.5" fill="none" stroke="currentColor" stroke-width="2"/><circle class="wheel" cx="12" cy="10" r="2.6" fill="currentColor"/></svg>
+    <span>Scroll to navigate</span>
+  </div>
+</div>
+
+<!-- MENU PANEL -->
+<div class="panel" id="menuPanel" aria-hidden="true">
+  <div class="panel_head">
+    <span class="panel_logo">MindCurator</span>
+    <button class="panel_x" id="menuClose" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="panel_nav">
+    <button data-go="0">Projects <small>Selected work</small></button>
+    <a href="https://m-arjun-same.github.io/themindcurator/" target="_blank" rel="noopener">Studio <small>About us</small></a>
+    <a href="https://www.instagram.com/themindcurator_studio" target="_blank" rel="noopener">Instagram <small>@themindcurator_studio</small></a>
+    <button id="reelBtn">Play reel <small>Auto tour</small></button>
+    <button id="contactBtn">Slide to contact us <small>hello →</small></button>
+  </nav>
+  <div class="panel_clocks">
+    <div class="clock"><span class="clock_city">Hyderabad</span><span class="clock_time" id="clkHyd">--:--</span></div>
+    <div class="clock"><span class="clock_city">Las Vegas</span><span class="clock_time" id="clkLv">--:--</span></div>
+  </div>
+</div>
+
+<!-- CONTACT PANEL -->
+<div class="panel contact" id="contactPanel" aria-hidden="true">
+  <div class="panel_head">
+    <span class="panel_logo">Contact us</span>
+    <button class="panel_x" id="contactClose" aria-label="Close contact">✕</button>
+  </div>
+  <p class="contact_txt">We curate your business into a website people remember.</p>
+  <div class="mailpill">
+    <span class="mailpill_addr">themindcuratorstudio@gmail.com</span>
+    <button class="mailpill_copy" id="copyMail">Copy</button>
+  </div>
+  <div class="contact_row">
+    <a href="https://wa.me/919398359538" target="_blank" rel="noopener">WhatsApp</a>
+    <a href="mailto:themindcuratorstudio@gmail.com">Email</a>
+    <a href="https://www.instagram.com/themindcurator_studio" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<!-- COOKIE CARD -->
+<div class="cookie" id="cookie">
+  <p>We use cookies to track and enhance your experience. <a href="#" onclick="return false">Cookie policy</a></p>
+  <div class="cookie_btns">
+    <button id="ckReject">Reject</button>
+    <button id="ckSettings">Settings</button>
+    <button id="ckAccept" class="dark">Accept</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
