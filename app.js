@@ -44,12 +44,11 @@ const wrap = i => ((i % N) + N) % N;
 const off = i => { let d = i - current; d -= Math.round(d / N) * N; return d; };
 
 function startVideos() { syncVideos(); }
-let userPaused = false;
+let userPlaying = false;   // videos NEVER autoplay — they play only on the user's click
 function syncVideos() {
   const act = wrap(Math.round(current));
   videos.forEach((v, i) => {
-    const d = Math.abs(off(i));
-    if (d < 0.55 && !userPaused) { v.play().catch(() => {}); } else { v.pause(); } // only the centred video decodes — neighbours ride on posters (mobile perf)
+    if (i === act && userPlaying && Math.abs(off(i)) < 0.55) { v.play().catch(() => {}); } else { v.pause(); }
   });
   return act;
 }
@@ -60,6 +59,7 @@ const titleWrap = document.getElementById("titleWrap");
 const counterEl = document.getElementById("counterEl");
 const mouseEl = document.getElementById("mouseEl");
 const playBtn = document.getElementById("playBtn");
+const bigPlay = document.getElementById("bigPlay");
 function frame() {
   current += (target - current) * 0.062;
   if (Math.abs(target - current) < 0.0004) current = target;
@@ -92,18 +92,21 @@ function frame() {
   // chrome phases: header / title / counter / mouse button exist only in full-screen phase
   const co = Math.pow(expand, 1.4).toFixed(3);
   topEl.style.opacity = co; titleWrap.style.opacity = co;
-  counterEl.style.opacity = co; mouseEl.style.opacity = co; playBtn.style.opacity = co;
+  counterEl.style.opacity = co; mouseEl.style.opacity = co;
+  playBtn.style.opacity = userPlaying ? co : 0;               // small pause button only while playing
+  const bp = (!userPlaying && Math.abs(target - current) < 0.05) ? 1 : 0;  // centre play when settled + paused
+  bigPlay.style.opacity = bp; bigPlay.style.pointerEvents = bp ? "auto" : "none";
   body.classList.toggle("full", expand > 0.5);
   const pe = expand > 0.5 ? "auto" : "none";
-  topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe; playBtn.style.pointerEvents = pe;
+  topEl.style.pointerEvents = pe; titleWrap.style.pointerEvents = pe;
+  playBtn.style.pointerEvents = userPlaying ? pe : "none";
 
   const act = syncVideos();
   if (act !== lastActive) {
     lastActive = act;
-    userPaused = false; body.classList.remove("vid-paused");
-    const av = videos[act];               // every video starts from the beginning when scrolled to
+    userPlaying = false; body.classList.remove("vid-playing");
+    const av = videos[act];               // every video waits at 0:00 until the user clicks play
     try { av.currentTime = 0; } catch (e) {}
-    av.play().catch(() => {});
     const s = SLIDES[act];
     const t = document.getElementById("ptitle");
     t.style.opacity = "0";
@@ -175,12 +178,14 @@ document.getElementById("reelBtn").onclick = () => {
   closePanels(); stopTour();
   tourTimer = setInterval(() => { target = Math.round(target) + 1; }, 4200);
 };
-playBtn.onclick = () => {
+function togglePlay() {
   const v = videos[wrap(Math.round(current))];
-  if (v.paused) { userPaused = false; v.play().catch(() => {}); }
-  else { userPaused = true; v.pause(); }
-  body.classList.toggle("vid-paused", userPaused);
-};
+  if (v.paused) { userPlaying = true; v.play().catch(() => {}); }
+  else { userPlaying = false; v.pause(); }
+  body.classList.toggle("vid-playing", userPlaying);
+}
+playBtn.onclick = togglePlay;
+document.getElementById("bigPlay").onclick = togglePlay;
 document.getElementById("copyMail").onclick = e => {
   navigator.clipboard && navigator.clipboard.writeText("themindcuratorstudio@gmail.com");
   e.target.textContent = "Copied!"; setTimeout(() => e.target.textContent = "Copy", 1600);

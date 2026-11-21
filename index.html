@@ -6,7 +6,7 @@
 <title>MindCurator Studio | Branding, motion and websites</title>
 <meta name="description" content="MindCurator Studio — we curate your business into a website people remember. Selected projects showcase.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231d1d1d'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='26' fill='%23fff' text-anchor='middle'%3EMC%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body data-theme="dark">
 
@@ -74,6 +74,11 @@
   <span>Rotate your phone to watch clearly</span>
 </div>
 
+<!-- BIG CENTRE PLAY: video plays only when the user clicks -->
+<button class="bigplay" id="bigPlay" aria-label="Play the video">
+  <svg width="26" height="30" viewBox="0 0 15 16"><path d="M3 1.8c0-.9 1-1.5 1.8-1L13 7c.8.5.8 1.6 0 2.1l-8.2 6.1c-.8.5-1.8-.1-1.8-1V1.8z" fill="#f2f2f2"/></svg>
+</button>
+
 <!-- PLAY / PAUSE: user's own control for the video -->
 <button class="playbtn" id="playBtn" aria-label="Play or pause the video">
   <svg class="ico-pause" width="15" height="16" viewBox="0 0 15 16"><rect x="1" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/><rect x="9.5" y="1" width="4.5" height="14" rx="1.5" fill="#f2f2f2"/></svg>
@@ -123,6 +128,6 @@
 </div>
 <div class="scrim" id="scrim"></div>
 
-<script src="app.js"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
