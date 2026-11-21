@@ -32,20 +32,20 @@ const loadTick = setInterval(() => {
   if (shown >= 100 && loaded >= 1) {
     shown = 100; clearInterval(loadTick);
     bar.style.width = "100%"; pct.textContent = "100%";
-    setTimeout(() => document.getElementById("loader").classList.add("done"), 250);
+    setTimeout(() => { document.getElementById("loader").classList.add("done"); videos[active].play().catch(() => {}); }, 250);
   }
   bar.style.width = shown + "%"; pct.textContent = shown + "%";
 }, 90);
 setTimeout(() => { // never trap the user behind the loader
   if (!document.getElementById("loader").classList.contains("done")) {
-    clearInterval(loadTick); document.getElementById("loader").classList.add("done");
+    clearInterval(loadTick); document.getElementById("loader").classList.add("done"); videos[active].play().catch(() => {});
   }
 }, 4500);
 
 /* ---------- FOCUS PULL ENGINE ---------- */
 const wrap = i => ((i % N) + N) % N;
 const pad2 = n => String(n).padStart(2, "0");
-let active = 0, userPlaying = false, tourTimer = null;
+let active = 0, tourTimer = null;
 const barFill = document.getElementById("barFill");
 
 function focusOf(d) {           // how out of focus a card is, d in card widths from centre
@@ -61,11 +61,9 @@ function focusOf(d) {           // how out of focus a card is, d in card widths 
 function setActive(i) {
   if (i === active && cards[i].classList.contains("is-active")) return;
   active = i;
-  userPlaying = false;
-  body.classList.remove("vid-playing");
-  videos.forEach((v, j) => {       // every video waits at 0:00 until the user clicks play
-    v.pause();
-    if (j === i) { try { v.currentTime = 0; } catch (e) {} }
+  videos.forEach((v, j) => {       // landing on a project restarts its video from 0:00 and plays it
+    if (j === i) { try { v.currentTime = 0; } catch (e) {} v.play().catch(() => {}); }
+    else v.pause();
   });
   cards.forEach((c, j) => c.classList.toggle("is-active", j === i));
   const s = SLIDES[i];
@@ -123,16 +121,8 @@ addEventListener("keydown", e => {
   if (e.key === "Escape") closePanels();
 });
 
-/* ---------- CLICK-TO-PLAY (videos never autoplay) ---------- */
-function togglePlay(i) {
-  const v = videos[i];
-  if (v.paused) { userPlaying = true; v.play().catch(() => {}); }
-  else { userPlaying = false; v.pause(); }
-  cards[i].classList.toggle("playing", userPlaying);
-  body.classList.toggle("vid-playing", userPlaying);
-}
+/* ---------- CARD CLICK: glide to that project (it autoplays on landing) ---------- */
 cards.forEach((c, i) => {
-  c.querySelector(".cardplay").addEventListener("click", e => { e.stopPropagation(); togglePlay(i); });
   c.addEventListener("click", () => { if (i !== active) { stopTour(); scrollToIndex(i); } });
 });
 
