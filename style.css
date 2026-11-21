@@ -4,15 +4,13 @@
 :root{
   --ink:#1d1d1d; --paper:#eee; --bgstage:#e7e7e7;
   --ease:cubic-bezier(.771,.029,.189,1.007);
-  --tx:#fff;
+  --tx:#1d1d1d;
 }
 html,body{height:100%}
 body{
   font-family:base,Arial,sans-serif; background:var(--bgstage); color:var(--tx);
   overflow:hidden; -webkit-font-smoothing:antialiased; user-select:none;
-  transition:color .5s var(--ease);
 }
-body[data-theme="light"]{--tx:#1d1d1d}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
@@ -32,24 +30,20 @@ body.panel-open .chrome{opacity:0;pointer-events:none}
 .chrome.top{top:0;display:flex;align-items:flex-start;justify-content:space-between;padding:22px 26px}
 .wordmark{font-size:17px;font-weight:700;letter-spacing:.01em}
 .tagline{font-size:15px;line-height:1.35;text-align:right}
-.burger{width:44px;height:44px;border-radius:50%;background:var(--tx);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:transform .3s var(--ease)}
-.burger span{display:block;width:18px;height:2px;background:var(--bgstage);background:#1d1d1d}
-body[data-theme="light"] .burger span{background:#eee}
+.burger{width:44px;height:44px;border-radius:50%;background:#1d1d1d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:transform .3s var(--ease)}
+.burger span{display:block;width:18px;height:2px;background:#eee}
 .burger:hover{transform:scale(1.08)}
 
 .chrome.bottom{bottom:0;display:flex;align-items:flex-end;justify-content:space-between;padding:26px;pointer-events:none}
 .chrome.bottom>*{pointer-events:auto}
 .bl{display:flex;flex-direction:column;gap:10px;min-width:0}
-.ptitle{font-size:clamp(34px,4.2vw,58px);font-weight:400;letter-spacing:-.02em;line-height:1.02;max-width:44vw;transition:opacity .25s var(--ease);text-shadow:0 1px 22px rgba(0,0,0,.38)}
-body[data-theme="light"] .ptitle{text-shadow:0 1px 22px rgba(255,255,255,.5)}
+.ptitle{font-size:clamp(34px,4.2vw,58px);font-weight:400;letter-spacing:-.02em;line-height:1.02;max-width:44vw;transition:opacity .25s var(--ease);text-shadow:0 1px 22px rgba(255,255,255,.55)}
 .counter{font-size:14px;opacity:.85}
 .counter span{font-variant-numeric:tabular-nums}
 
-.pill{display:flex;align-items:center;gap:14px;background:#f4f4f4;color:#1d1d1d;border-radius:99px;padding:8px 10px 8px 8px;box-shadow:0 12px 34px rgba(0,0,0,.22);position:absolute;left:50%;bottom:26px;transform:translateX(-50%);transition:transform .3s var(--ease),background .4s var(--ease),color .4s var(--ease)}
+.pill{display:flex;align-items:center;gap:14px;background:#f4f4f4;color:#1d1d1d;border-radius:99px;padding:8px 10px 8px 8px;box-shadow:0 12px 34px rgba(0,0,0,.22);position:absolute;left:50%;bottom:26px;transform:translateX(-50%);transition:transform .3s var(--ease)}
 .pill:hover{transform:translateX(-50%) scale(1.04)}
-body[data-theme="light"] .pill{background:#1d1d1d;color:#eee}
 .pill_tile{width:40px;height:40px;border-radius:12px;background:#1d1d1d;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:none}
-body[data-theme="light"] .pill_tile{background:#eee;color:#1d1d1d}
 .pill_txt{font-size:15px;white-space:nowrap}
 .pill_ic{display:flex;flex-direction:column;gap:4px;padding-right:8px}
 .pill_ic span{width:16px;height:2px;background:currentColor}
@@ -62,7 +56,8 @@ body[data-theme="light"] .pill_tile{background:#eee;color:#1d1d1d}
 /* ---------- STAGE / RING ---------- */
 .stage{position:fixed;inset:0;perspective:1400px;overflow:hidden;background:var(--bgstage)}
 .ring{position:absolute;inset:0;transform-style:preserve-3d}
-.card{position:absolute;inset:0;overflow:hidden;background:#111;will-change:transform,opacity;backface-visibility:hidden}
+.card{position:absolute;left:21vw;top:11dvh;width:58vw;height:78dvh;overflow:hidden;background:#111;will-change:transform,opacity;backface-visibility:hidden;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+@media (max-width:640px){.card{left:9vw;top:14dvh;width:82vw;height:68dvh}}
 .card video{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ---------- PANELS ---------- */

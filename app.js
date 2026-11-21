@@ -34,7 +34,7 @@ setTimeout(() => { // never trap the user behind the loader
   if (!document.getElementById("loader").classList.contains("done")) {
     clearInterval(loadTick); document.getElementById("loader").classList.add("done"); startVideos();
   }
-}, 6000);
+}, 4500);
 
 /* ---------- RING ENGINE ---------- */
 let target = 0, current = 0, tourTimer = null;
@@ -60,9 +60,9 @@ function frame() {
 
   cards.forEach((c, i) => {
     const d = off(i), a = Math.abs(d);
-    const x = d * 58;                       // % of viewport sideways
-    const ry = d * -34;                     // deg, turned toward viewer
-    const s = Math.max(0.72, 1 - a * 0.13);
+    const x = d * 92;                       // % of card width sideways — neighbours peek at rest
+    const ry = d * -32;                     // deg, turned toward viewer
+    const s = Math.max(0.62, 1 - a * 0.17);
     c.style.transform = `translateX(${x}%) rotateY(${ry}deg) scale(${s})`;
     c.style.zIndex = String(100 - Math.round(a * 10));
     c.style.opacity = a > 2.4 ? "0" : "1";
@@ -87,10 +87,15 @@ requestAnimationFrame(frame);
 
 /* ---------- INPUT ---------- */
 function stopTour() { if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } }
+let lastStep = 0;
 addEventListener("wheel", e => {
   if (body.classList.contains("panel-open")) return;
   stopTour();
-  target += e.deltaY * 0.0016;
+  const now = performance.now();
+  if (now - lastStep > 320 && Math.abs(e.deltaY) > 6) {
+    target = Math.round(target) + Math.sign(e.deltaY);
+    lastStep = now;
+  }
 }, { passive: true });
 addEventListener("keydown", e => {
   if (e.key === "ArrowDown" || e.key === "ArrowRight") { stopTour(); target = Math.round(target) + 1; }
@@ -106,9 +111,7 @@ addEventListener("touchmove", e => {
   touchY = e.touches[0].clientY;
 }, { passive: true });
 addEventListener("touchend", () => { touchY = null; target = Math.round(target); });
-// settle: snap to nearest slide when input goes quiet
-let snapT;
-addEventListener("wheel", () => { clearTimeout(snapT); snapT = setTimeout(() => { target = Math.round(target); }, 140); }, { passive: true });
+
 
 /* ---------- PANELS ---------- */
 const menuPanel = document.getElementById("menuPanel"), contactPanel = document.getElementById("contactPanel");
